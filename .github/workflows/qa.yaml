@@ -1,0 +1,51 @@
+name: qa
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: pre-commit/action@v3.0.1
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: py
+          POSTGRES_DB: pypcr
+          POSTGRES_PASSWORD: py
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: '0.4.29'
+      - name: Set up Python
+        run: uv python install
+      - name: Install the project
+        run: uv sync
+      - name: Run tests
+        run: |
+          source .venv/bin/activate
+          cd src
+          ./manage.py migrate
+          ./manage.py test --verbosity=3
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false

@@ -1,0 +1,9 @@
+{
+    {% if endpoint %}
+        "username": "{{ endpoint.username }}",
+        "password": "{{ endpoint.password }}",
+        "display_name": "{{ endpoint.display_name }}",
+    {% endif %}
+    "sip_server": "sip.example.com",
+    "sip_protocol": "tcp"
+}

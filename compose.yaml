@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:15-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=py
+      - POSTGRES_PASSWORD=py
+      - POSTGRES_DB=pypcr
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U py -d pypcr"]
+      interval: 1s
+      timeout: 1s
+      retries: 10
