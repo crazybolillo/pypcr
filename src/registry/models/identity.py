@@ -7,14 +7,22 @@ from registry.models.endpoint import Endpoint
 
 class IdentityManager(models.Manager):
     _avaya_j_regex = re.compile(r"AVAYA/(J\d{3})-(?:\d\.?)+ \(MAC:([abcdef0-9]{12})\)$")
+    _avaya_vantage3_regex = re.compile(
+        r"Avaya/Vantage/.+-(K175).*\(MAC:([ABCDEFabcdef0-9]{12})\)$"
+    )
 
     def _avaya_jseries(self, ua: str) -> "Identity" or None:
         if match := self._avaya_j_regex.search(ua):
             return Identity(model=match.group(1), mac=match.group(2))
 
+    def _avaya_vantage3(self, ua: str) -> "Identity" or None:
+        if match := self._avaya_vantage3_regex.search(ua):
+            return Identity(model=match.group(1), mac=match.group(2))
+
     def identify(self, ua: str) -> "Identity" or None:
         for fn in [
             self._avaya_jseries,
+            self._avaya_vantage3,
         ]:
             identity = fn(ua)
             if identity:
