@@ -35,6 +35,16 @@ class TestIdentity(TestCase):
                 ua="Mozilla/4.0 (compatible; MSIE 6.0) AVAYA/J179-4.2.0 (MAC:c41f3ae55689)",
                 want=Identity(model="J179", mac="c41f3ae55689"),
             ),
+            MatchCase(
+                name="vantage3",
+                ua="Avaya/Vantage/3.2.0.1.9035-K175CW0A (MAC:C81FEADF8A4A)",
+                want=Identity(model="K175", mac="C81FEADF8A4A"),
+            ),
+            MatchCase(
+                name="vantage3",
+                ua="Avaya/Vantage/3.1.0-K175CW0A (MAC:C81FBE4E8A4A)",
+                want=Identity(model="K175", mac="C81FBE4E8A4A"),
+            ),
         ]
 
         for case in cases:
@@ -49,6 +59,10 @@ class TestIdentity(TestCase):
             NoMatchCase(
                 name="jseries-wrong-model",
                 ua="Mozilla/4.0 (compatible; MSIE 6.0) AVAYA/R134-4.2.0 (MAC:c41f3ae55689)",
+            ),
+            NoMatchCase(
+                name="vantage3-wrong-model",
+                ua="Avaya/Vantage/3.1.0-K195CW0A (MAC:C81FBE4E8A4A)",
             ),
         ]
 
